@@ -21,10 +21,10 @@ pipeline {
 
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool 'pankaj-sonar-scanner'
+                scannerHome = tool 'soni-sonar-scanner'
             }
             steps {
-                withSonarQubeEnv('pankaj-sonarqube-server') {
+                withSonarQubeEnv('soni-sonarqube-server') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
