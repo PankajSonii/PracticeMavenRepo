@@ -1,10 +1,8 @@
-def registry = "http://3.110.161.48:8082/"
 pipeline {
     agent any
 
     environment {
         PATH = "/opt/maven/bin:$PATH"
-        
     }
 
     stages {
@@ -22,10 +20,10 @@ pipeline {
 
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool 'soni-sonar-scanner'
+                scannerHome = tool 'pankaj-sonar-scanner'
             }
             steps {
-                withSonarQubeEnv('soni-sonarqube-server') {
+                withSonarQubeEnv('pankaj-sonarqube-server') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
@@ -37,10 +35,8 @@ pipeline {
                     echo "BUILD_ID: ${env.BUILD_ID}"
                     echo "GIT_COMMIT: ${env.GIT_COMMIT}"
 
-                    def server = Artifactory.newServer(
-                        url: "${env.REGISTRY}/artifactory",
-                        credentialsId: "artifact-cred"
-                    )
+                    // Use the configured Artifactory server
+                    def server = Artifactory.server('my-artifactory-server')
 
                     def properties = "buildid=${env.BUILD_ID},commitid=${env.GIT_COMMIT}"
 
