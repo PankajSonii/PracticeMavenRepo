@@ -20,10 +20,10 @@ pipeline {
 
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool 'pankaj-sonar-scanner'
+                scannerHome = tool 'soni-sonar-scanner'
             }
             steps {
-                withSonarQubeEnv('pankaj-sonarqube-server') {
+                withSonarQubeEnv('soni-sonarqube-server') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
@@ -35,13 +35,10 @@ pipeline {
                     echo "BUILD_ID: ${env.BUILD_ID}"
                     echo "GIT_COMMIT: ${env.GIT_COMMIT}"
 
-                    // Use the configured Artifactory server
                     def server = Artifactory.server('my-artifactory-server')
+                    def properties = "buildid=${env.BUILD_ID};commitid=${env.GIT_COMMIT}"
 
-                    def properties = "buildid=${env.BUILD_ID},commitid=${env.GIT_COMMIT}"
-
-                    def uploadSpec = """
-                    {
+                    def uploadSpec = """{
                         "files": [
                             {
                                 "pattern": "target/*.jar",
@@ -51,10 +48,9 @@ pipeline {
                                 "exclusions": ["*.sha1", "*.md5"]
                             }
                         ]
-                    }
-                    """
+                    }"""
 
-                    def buildInfo = server.upload(uploadSpec)
+                    def buildInfo = server.upload spec: uploadSpec
                     buildInfo.env.collect()
                     server.publishBuildInfo(buildInfo)
                 }
