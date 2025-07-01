@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PATH = "/opt/maven/bin:$PATH"
-        REGISTRY = "http://3.110.161.48:8082"
+        REGISTRY = "http://3.110.161.48:8081"
     }
 
     stages {
